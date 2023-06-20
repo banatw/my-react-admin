@@ -3,8 +3,6 @@ import { Create, Edit, ListButton, NumberInput, ShowButton, SimpleForm, TextInpu
 
 const PostEditActions = () => (
     <TopToolbar>
-        <ShowButton />
-        {/* Add your custom actions */}
         <ListButton />
     </TopToolbar>
 );

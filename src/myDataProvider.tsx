@@ -16,13 +16,49 @@ export default {
     getList: (resource : any, params : any) => {
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
+        
+        interface iFilter {
+            column:string,
+            value:string
+        }
+
+        var i = 0
+        var arrayFilter = []
+        var indexKey = Object.keys(params.filter)
+        for (let index = 0; index < indexKey.length; index++) {
+            const myFilter = {} as iFilter
+            myFilter.column = indexKey[index]
+            myFilter.value = params.filter[indexKey[index]]
+            arrayFilter.push(myFilter)
+        }
+        // for(var key in params.filter) {
+        //     if(i % 2 === 0) {
+        //         var myFilter = {} as iFilter
+        //         myFilter.field = params.filter[key]
+        //     }
+        //     else {
+        //         myFilter.value = params.filter[key]
+        //     }
+        //     arrayFilter.push(myFilter)
+        //     i++
+        // }
         const query = {
-            // sort: JSON.stringify([field, order]),
+            sort: JSON.stringify([field, order]),
             // range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
             // filter: JSON.stringify(params.filter),
+            filter: JSON.stringify(arrayFilter),
+            page:page-1,
+            size:perPage
         };
-        let currPage = page - 1
-        const url = `${apiUrl}/${resource}/list?page=${currPage}&size=${perPage}`;
+        // let arrFilter = []
+        // for(var key in params.filter) {
+        //     let filter = `${key},${params.filter[key]}`
+        //     arrFilter.push(filter)
+        // }
+        // let tes = arrFilter.join(',')
+        // console.log(query)
+        // const url = `${apiUrl}/${resource}/list?page=${page - 1}&size=${perPage}&sort=${field},${order}&filter=${tes}`;
+        const url = `${apiUrl}/${resource}/list?${stringify(query)}`;
         return httpClient(url,{
             method : 'GET'
         }).then(({ json }) => ({
