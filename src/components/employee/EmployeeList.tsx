@@ -1,5 +1,5 @@
 import React from 'react'
-import { Datagrid,DateField,EditButton,List, ShowButton, DeleteButton, TextField, TextInput, CreateButton, FilterButton, FilterForm, ListBase,Pagination } from 'react-admin'
+import { Datagrid,ReferenceField,EditButton,List, ShowButton, DeleteButton, TextField, TextInput, CreateButton, FilterButton, FilterForm, ListBase,Pagination } from 'react-admin'
 import { Stack } from '@mui/material';
 
 const postFilters = [
@@ -25,8 +25,10 @@ const EmployeeList = () => (
         <Datagrid>
             <TextField source="id" />
             <TextField source="name" />
-            <TextField source="address" />
-            <TextField source="job" />
+            <TextField source="adress" />
+            <ReferenceField source="job_id" reference="job">
+                <TextField source="name" />
+            </ReferenceField>
             <EditButton />
             <DeleteButton mutationMode='pessimistic' />
         </Datagrid>

@@ -7,13 +7,11 @@ const PostEditActions = () => (
     </TopToolbar>
 );
 
-export const EmployeeEdit = () => (
+export default () => (
     <Edit actions={<PostEditActions />}>
         <SimpleForm>
             <TextInput source="id" disabled />
             <TextInput source="name" />
-            <TextInput source="address" />
-            <TextInput source="job" />
         </SimpleForm>
     </Edit>
 )

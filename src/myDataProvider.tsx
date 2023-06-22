@@ -1,13 +1,7 @@
 import { fetchUtils } from 'react-admin';
 import { stringify } from 'query-string';
 
-
-
-
-
 const apiUrl = 'http://localhost:8080/api';
-// const apiUrl = process.env.REACT_APP_API_URL
-// console.log(import.meta.env) // 123
 const httpClient = fetchUtils.fetchJson;
 
 //localhost:8080/api/employee/list?page=0&size=10
@@ -22,7 +16,6 @@ export default {
             value:string
         }
 
-        var i = 0
         var arrayFilter = []
         var indexKey = Object.keys(params.filter)
         for (let index = 0; index < indexKey.length; index++) {
@@ -31,19 +24,15 @@ export default {
             myFilter.value = params.filter[indexKey[index]]
             arrayFilter.push(myFilter)
         }
-        // for(var key in params.filter) {
-        //     if(i % 2 === 0) {
-        //         var myFilter = {} as iFilter
-        //         myFilter.field = params.filter[key]
-        //     }
-        //     else {
-        //         myFilter.value = params.filter[key]
-        //     }
-        //     arrayFilter.push(myFilter)
-        //     i++
-        // }
+
+        var indexKey = Object.keys(params.sort)
+        var mySort = {} as iFilter
+        mySort.column = field
+        mySort.value = order
+        
+        
         const query = {
-            sort: JSON.stringify([field, order]),
+            sort: JSON.stringify(mySort),
             // range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
             // filter: JSON.stringify(params.filter),
             filter: JSON.stringify(arrayFilter),
@@ -61,7 +50,7 @@ export default {
         const url = `${apiUrl}/${resource}/list?${stringify(query)}`;
         return httpClient(url,{
             method : 'GET'
-        }).then(({ json }) => ({
+        }).then(({ json}) => ({
             data: json.content,
             total: json.totalElements,
         }));
@@ -81,21 +70,67 @@ export default {
     },
 
     getManyReference: (resource : any, params : any) => {
+        // const { page, perPage } = params.pagination;
+        // const { field, order } = params.sort;
+        // const query = {
+        //     sort: JSON.stringify([field, order]),
+        //     range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+        //     filter: JSON.stringify({
+        //         ...params.filter,
+        //         [params.target]: params.id,
+        //     }),
+        // };
+        // const url = `${apiUrl}/${resource}?${stringify(query)}`;
+
+        // return httpClient(url).then(({ headers, json }) => ({
+        //     data: json,
+        //     total: parseInt(headers.get('content-range').split('/').pop(), 10),
+        // }));
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
-        const query = {
-            sort: JSON.stringify([field, order]),
-            range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
-            filter: JSON.stringify({
-                ...params.filter,
-                [params.target]: params.id,
-            }),
-        };
-        const url = `${apiUrl}/${resource}?${stringify(query)}`;
+        
+        interface iFilter {
+            column:string,
+            value:string
+        }
 
-        return httpClient(url).then(({ headers, json }) => ({
-            data: json,
-            total: parseInt(headers.get('content-range').split('/').pop(), 10),
+        var arrayFilter = []
+        var indexKey = Object.keys(params.filter)
+        for (let index = 0; index < indexKey.length; index++) {
+            const myFilter = {} as iFilter
+            myFilter.column = indexKey[index]
+            myFilter.value = params.filter[indexKey[index]]
+            arrayFilter.push(myFilter)
+        }
+
+        var indexKey = Object.keys(params.sort)
+        var mySort = {} as iFilter
+        mySort.column = field
+        mySort.value = order
+        
+        
+        const query = {
+            sort: JSON.stringify(mySort),
+            // range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+            // filter: JSON.stringify(params.filter),
+            filter: JSON.stringify(arrayFilter),
+            page:page-1,
+            size:perPage
+        };
+        // let arrFilter = []
+        // for(var key in params.filter) {
+        //     let filter = `${key},${params.filter[key]}`
+        //     arrFilter.push(filter)
+        // }
+        // let tes = arrFilter.join(',')
+        // console.log(query)
+        // const url = `${apiUrl}/${resource}/list?page=${page - 1}&size=${perPage}&sort=${field},${order}&filter=${tes}`;
+        const url = `${apiUrl}/${resource}/list?${stringify(query)}`;
+        return httpClient(url,{
+            method : 'GET'
+        }).then(({ json}) => ({
+            data: json.content,
+            total: json.totalElements,
         }));
     },
 

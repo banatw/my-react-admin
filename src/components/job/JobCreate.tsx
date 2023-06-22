@@ -3,18 +3,14 @@ import { Create, NumberInput, SimpleForm, TextInput, TopToolbar, ListButton } fr
 
 const PostEditActions = () => (
     <TopToolbar>
-        {/* <ShowButton /> */}
-        {/* Add your custom actions */}
         <ListButton />
     </TopToolbar>
 );
 
-export const EmployeeCreate = () => (
+export default  () => (
     <Create actions={<PostEditActions />}>
         <SimpleForm>
             <TextInput source="name" />
-            <TextInput source="address" />
-            <TextInput source="job" />
         </SimpleForm>
     </Create>
 )
